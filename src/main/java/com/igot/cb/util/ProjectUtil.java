@@ -2,6 +2,8 @@ package com.igot.cb.util;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import org.joda.time.DateTime;
 import org.springframework.http.HttpStatus;
@@ -47,5 +49,14 @@ public class ProjectUtil {
         response.getParams().setStatus(Constants.FAILED);
         response.setResponseCode(httpStatus);
         response.getParams().setErrMsg(errorMessage);
+    }
+
+    public static Map<String, Object> createDefaultMapResponse(String api, String err, String errMsg) {
+        Map<String, Object> response = new HashMap<>();
+        response.put(Constants.HEALTHY, Constants.TRUE_1);
+        response.put(Constants.NAME, api);
+        response.put(Constants.ERR, err != null ? err : "");
+        response.put(Constants.ERROR_MESSAGE, errMsg != null ? errMsg : "");
+        return response;
     }
 }

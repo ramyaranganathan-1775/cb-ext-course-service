@@ -2,10 +2,12 @@ package com.igot.cb.elasticsearch.service;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.FieldValue;
+import co.elastic.clients.elasticsearch._types.HealthStatus;
 import co.elastic.clients.elasticsearch._types.Refresh;
 import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.aggregations.*;
 import co.elastic.clients.elasticsearch._types.query_dsl.*;
+import co.elastic.clients.elasticsearch.cluster.HealthResponse;
 import co.elastic.clients.elasticsearch.core.*;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.core.search.SourceConfig;
@@ -522,6 +524,19 @@ public class EsUtilServiceImpl implements EsUtilService{
         } catch (Exception e) {
             log.error("Error reading json schema", e);
             throw new CustomException("error reading json schema", e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public boolean isElasticsearchHealthy() {
+        try {
+
+            HealthResponse healthResponse = elasticsearchClient.cluster().health();
+            HealthStatus status = healthResponse.status();
+            return HealthStatus.Green.equals(status) || HealthStatus.Yellow.equals(status);
+
+        } catch (Exception e) {
+            log.error("ElasticSearch health check failed", e);
+            return false;
         }
     }
 }
